@@ -19,7 +19,7 @@ func init() {
 }
 
 func Stdio(c *expect.Console) terminal.Stdio {
-	return terminal.Stdio{c.Tty(), c.Tty(), c.Tty()}
+	return terminal.Stdio{In: c.Tty(), Out: c.Tty(), Err: c.Tty()}
 }
 
 type PromptTest struct {
@@ -250,10 +250,10 @@ func TestAsk(t *testing.T) {
 				"pizza":                    true,
 				"commit-message":           "Add editor prompt tests\n",
 				"commit-message-validated": "Add editor prompt tests\n",
-				"name":     "Johnny Appleseed",
-				"day":      []string{"Monday", "Wednesday"},
-				"password": "secret",
-				"color":    "yellow",
+				"name":                     "Johnny Appleseed",
+				"day":                      []string{"Monday", "Wednesday"},
+				"password":                 "secret",
+				"color":                    "yellow",
 			},
 		},
 		{
