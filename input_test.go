@@ -20,6 +20,8 @@ func init() {
 
 func TestInputRender(t *testing.T) {
 
+	suggestFn := func(string) (s []string) { return s }
+
 	tests := []struct {
 		title    string
 		prompt   Input
@@ -67,6 +69,49 @@ func TestInputRender(t *testing.T) {
 			Input{Message: "What is your favorite month:", Default: "April", Help: "This is helpful"},
 			InputTemplateData{ShowHelp: true},
 			fmt.Sprintf("%s This is helpful\n%s What is your favorite month: (April) ", defaultIcons().Help.Text, defaultIcons().Question.Text),
+		},
+		{
+			"Test Input question output with completion",
+			Input{Message: "What is your favorite month:", Suggest: suggestFn},
+			InputTemplateData{},
+			fmt.Sprintf("%s What is your favorite month: [%s for suggestions] ", defaultIcons().Question.Text, string(defaultPromptConfig().SuggestInput)),
+		},
+		{
+			"Test Input question output with suggestions and help hidden",
+			Input{Message: "What is your favorite month:", Suggest: suggestFn, Help: "This is helpful"},
+			InputTemplateData{},
+			fmt.Sprintf("%s What is your favorite month: [%s for help] [%s for suggestions] ", defaultIcons().Question.Text, string(defaultPromptConfig().HelpInput), string(defaultPromptConfig().SuggestInput)),
+		},
+		{
+			"Test Input question output with suggestions and default and help hidden",
+			Input{Message: "What is your favorite month:", Suggest: suggestFn, Help: "This is helpful", Default: "April"},
+			InputTemplateData{},
+			fmt.Sprintf("%s What is your favorite month: [%s for help] [%s for suggestions] (April) ", defaultIcons().Question.Text, string(defaultPromptConfig().HelpInput), string(defaultPromptConfig().SuggestInput)),
+		},
+		{
+			"Test Input question output with suggestions shown",
+			Input{Message: "What is your favorite month:", Suggest: suggestFn},
+			InputTemplateData{
+				PageEntries:   core.OptionAnswerList([]string{"January", "February", "March", "etc..."}),
+				SelectedIndex: 1,
+				Answer:        "February",
+			},
+			fmt.Sprintf(
+				"%s What is your favorite month: February [Use arrows to navegate, enter to select, type to complement answer]\n"+
+					"  January\n%s February\n  March\n  etc...\n",
+				defaultIcons().Question.Text, defaultPromptConfig().Icons.SelectFocus.Text,
+			),
+		},
+		{
+			"Test Input question output with suggestion complemented",
+			Input{Message: "What is your favorite month:", Suggest: suggestFn},
+			InputTemplateData{
+				Answer: "February and",
+			},
+			fmt.Sprintf(
+				"%s What is your favorite month: [%s for suggestions] February and",
+				defaultIcons().Question.Text, defaultPromptConfig().SuggestInput,
+			),
 		},
 	}
 
