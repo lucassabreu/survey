@@ -185,6 +185,21 @@ func TestInputPrompt(t *testing.T) {
 			"Satoshi Nakamoto",
 		},
 		{
+			"Test Input prompt interaction and using help input as answer",
+			&Input{
+				Message: "Are you confused?",
+				Help:    "You can use ? as answer when in doubt",
+			},
+			func(c *expect.Console) {
+				c.ExpectString("Are you confused?")
+				c.SendLine("?")
+				c.ExpectString("You can use ? as answer when in doubt")
+				c.SendLine("?")
+				c.ExpectEOF()
+			},
+			"?",
+		},
+		{
 			// https://en.wikipedia.org/wiki/ANSI_escape_code
 			// Device Status Report - Reports the cursor position (CPR) to the
 			// application as (as though typed at the keyboard) ESC[n;mR, where n is the

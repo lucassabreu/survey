@@ -185,7 +185,7 @@ func (i *Input) Prompt(config *PromptConfig) (interface{}, error) {
 	cursor.Up(1)
 
 	// if we ran into the help string
-	if i.answer == config.HelpInput && i.Help != "" {
+	if i.answer == config.HelpInput && i.Help != "" && !i.showingHelp {
 		// show the help and prompt again
 		i.showingHelp = true
 		return i.Prompt(config)

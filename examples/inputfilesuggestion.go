@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 
@@ -21,7 +22,16 @@ var q = []*survey.Question{
 			Suggest: suggestFiles,
 			Help:    "Any file; do not need to exist yet",
 		},
-		Validate: survey.Required,
+		Validate: survey.ComposeValidators(
+			survey.Required,
+			func(file interface{}) error {
+				if file == "?" {
+					return errors.New("? is not a valid file name")
+				}
+
+				return nil
+			},
+		),
 	},
 }
 
